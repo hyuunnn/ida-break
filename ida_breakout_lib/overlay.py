@@ -2,7 +2,7 @@ import logging
 
 from PySide6 import QtCore, QtGui, QtWidgets
 
-from ida_break_lib.game import GameState, Paddle, Phase
+from ida_breakout_lib.game import GameState, Paddle, Phase
 
 
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ BALL_RADIUS = 5
 END_SCREEN_HINT = "[R] restart    [Esc] exit"
 
 
-class BreakOverlay(QtWidgets.QWidget):
+class BreakoutOverlay(QtWidgets.QWidget):
     """Transparent child widget over the pseudocode viewport that hosts the game."""
 
     def __init__(
@@ -62,7 +62,7 @@ class BreakOverlay(QtWidgets.QWidget):
 
         self._bg_color = bg_color
         logger.info(
-            "ida-break: bg color rgb=(%d,%d,%d)",
+            "ida-breakout: bg color rgb=(%d,%d,%d)",
             self._bg_color.red(), self._bg_color.green(), self._bg_color.blue(),
         )
         self._fg_paddle = QtGui.QColor("#5e81ac")
@@ -100,7 +100,7 @@ class BreakOverlay(QtWidgets.QWidget):
         self.setFocus(QtCore.Qt.OtherFocusReason)
         self.timer.start()
         logger.info(
-            "ida-break: started %dx%d, %d bricks", self.width(), self.height(), len(self.state.bricks)
+            "ida-breakout: started %dx%d, %d bricks", self.width(), self.height(), len(self.state.bricks)
         )
 
     def stop(self):

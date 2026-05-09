@@ -6,8 +6,8 @@ import ida_hexrays
 
 from PySide6 import QtWidgets
 
-from ida_break_lib.overlay import BreakOverlay
-from ida_break_lib.pseudocode import (
+from ida_breakout_lib.overlay import BreakoutOverlay
+from ida_breakout_lib.pseudocode import (
     compute_playfield_height,
     detect_bricks_from_pixels,
     find_pseudocode_viewport,
@@ -18,8 +18,8 @@ from ida_break_lib.pseudocode import (
 
 logger = logging.getLogger(__name__)
 
-ACTION_NAME = "ida_break:start"
-ACTION_LABEL = "ida-break: Start brick break"
+ACTION_NAME = "ida_breakout:start"
+ACTION_LABEL = "ida-breakout: Start brick break"
 ACTION_HOTKEY = "Ctrl-Alt-K"
 ACTION_TOOLTIP = "Turn this Pseudocode view into a Breakout game."
 
@@ -53,7 +53,7 @@ class _UIHooks(ida_kernwin.UI_Hooks):
             and twidget is not None
             and twidget == self.plugmod.active_twidget
         ):
-            logger.info("ida-break: pseudocode tab going away, stopping game")
+            logger.info("ida-breakout: pseudocode tab going away, stopping game")
             self.plugmod.stop_game()
 
     def finish_populating_widget_popup(self, widget, popup):
@@ -68,12 +68,12 @@ class _HexraysHooks(ida_hexrays.Hexrays_Hooks):
 
     def refresh_pseudocode(self, vu):
         if self.plugmod.active_overlay is not None:
-            logger.info("ida-break: pseudocode refreshed (F5), stopping game")
+            logger.info("ida-breakout: pseudocode refreshed (F5), stopping game")
             self.plugmod.stop_game()
         return 0
 
 
-class break_plugmod_t(ida_idaapi.plugmod_t):
+class breakout_plugmod_t(ida_idaapi.plugmod_t):
     def __init__(self):
         self.active_overlay = None
         self.active_twidget = None
@@ -95,12 +95,12 @@ class break_plugmod_t(ida_idaapi.plugmod_t):
         if ida_kernwin.register_action(desc):
             self._action_registered = True
             logger.info(
-                "ida-break: registered action %s with hotkey %s",
+                "ida-breakout: registered action %s with hotkey %s",
                 ACTION_NAME,
                 ACTION_HOTKEY,
             )
         else:
-            logger.warning("ida-break: failed to register action %s", ACTION_NAME)
+            logger.warning("ida-breakout: failed to register action %s", ACTION_NAME)
 
     def unregister_action(self):
         if self._action_registered:
@@ -131,12 +131,12 @@ class break_plugmod_t(ida_idaapi.plugmod_t):
         self._hexrays_available = bool(ida_hexrays.init_hexrays_plugin())
         if not self._hexrays_available:
             logger.warning(
-                "ida-break: Hex-Rays decompiler not available; the action will be a no-op"
+                "ida-breakout: Hex-Rays decompiler not available; the action will be a no-op"
             )
         self.register_action()
         self.register_ui_hooks()
         self.register_hexrays_hooks()
-        logger.info("ida-break loaded")
+        logger.info("ida-breakout loaded")
 
     def run(self, arg):
         self.toggle_game()
@@ -156,44 +156,44 @@ class break_plugmod_t(ida_idaapi.plugmod_t):
     def start_game(self):
         twidget = ida_kernwin.get_current_widget()
         if twidget is None or ida_kernwin.get_widget_type(twidget) != ida_kernwin.BWN_PSEUDOCODE:
-            ida_kernwin.warning("ida-break: focus a Pseudocode view first.")
+            ida_kernwin.warning("ida-breakout: focus a Pseudocode view first.")
             return
         vdui = ida_hexrays.get_widget_vdui(twidget)
         if vdui is None or vdui.cfunc is None:
-            ida_kernwin.warning("ida-break: no decompiled function in this view.")
+            ida_kernwin.warning("ida-breakout: no decompiled function in this view.")
             return
 
         qwidget = ida_kernwin.PluginForm.TWidgetToPyQtWidget(twidget)
         if qwidget is None:
-            ida_kernwin.warning("ida-break: could not convert pseudocode TWidget to QWidget.")
+            ida_kernwin.warning("ida-breakout: could not convert pseudocode TWidget to QWidget.")
             return
 
         viewport, scroll_area = find_pseudocode_viewport(qwidget)
         if viewport is None:
-            ida_kernwin.warning("ida-break: could not locate the pseudocode viewport.")
+            ida_kernwin.warning("ida-breakout: could not locate the pseudocode viewport.")
             return
 
         grab = grab_viewport_buffer(viewport)
         if grab is None:
-            ida_kernwin.warning("ida-break: could not capture the pseudocode viewport.")
+            ida_kernwin.warning("ida-breakout: could not capture the pseudocode viewport.")
             return
 
         bg_colors = sample_viewport_bg_colors(viewport, grab=grab)
         if not bg_colors:
             ida_kernwin.warning(
-                "ida-break: could not sample viewport background colors."
+                "ida-breakout: could not sample viewport background colors."
             )
             return
 
         bricks = detect_bricks_from_pixels(viewport, bg_colors, grab=grab)
         if not bricks:
             ida_kernwin.warning(
-                "ida-break: no ink detected in the pseudocode viewport."
+                "ida-breakout: no ink detected in the pseudocode viewport."
             )
             return
 
         playfield_h = compute_playfield_height(viewport)
-        overlay = BreakOverlay(
+        overlay = BreakoutOverlay(
             viewport,
             scroll_area,
             bricks,
@@ -205,7 +205,7 @@ class break_plugmod_t(ida_idaapi.plugmod_t):
 
         self.active_overlay = overlay
         self.active_twidget = twidget
-        ida_kernwin.msg("[ida-break] started ({0} bricks)\n".format(len(bricks)))
+        ida_kernwin.msg("[ida-breakout] started ({0} bricks)\n".format(len(bricks)))
 
     def stop_game(self):
         overlay = self.active_overlay
@@ -214,15 +214,15 @@ class break_plugmod_t(ida_idaapi.plugmod_t):
         self.active_twidget = None
         if overlay is None:
             return
-        ida_kernwin.msg("[ida-break] stopped\n")
+        ida_kernwin.msg("[ida-breakout] stopped\n")
         try:
             overlay.stop()
         except Exception:
-            logger.debug("ida-break: overlay.stop() raised during teardown", exc_info=True)
+            logger.debug("ida-breakout: overlay.stop() raised during teardown", exc_info=True)
         try:
             overlay.deleteLater()
         except Exception:
-            logger.debug("ida-break: overlay.deleteLater() raised during teardown", exc_info=True)
+            logger.debug("ida-breakout: overlay.deleteLater() raised during teardown", exc_info=True)
         if twidget is not None:
             try:
                 ida_kernwin.activate_widget(twidget, True)
@@ -234,12 +234,12 @@ class break_plugmod_t(ida_idaapi.plugmod_t):
                 pass
 
 
-class break_plugin_t(ida_idaapi.plugin_t):
+class breakout_plugin_t(ida_idaapi.plugin_t):
     flags = ida_idaapi.PLUGIN_MULTI
     comment = "Pseudocode Breakout"
     help = "Press {0} inside a Pseudocode view to play.".format(ACTION_HOTKEY)
-    wanted_name = "ida-break"
+    wanted_name = "ida-breakout"
     wanted_hotkey = ""
 
     def init(self):
-        return break_plugmod_t()
+        return breakout_plugmod_t()

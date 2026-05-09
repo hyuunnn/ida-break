@@ -1,4 +1,4 @@
-# ida-break
+# ida-breakout
 
 [README_ko.md](README_ko.md)
 
@@ -9,7 +9,7 @@ with the ball; the listing stays visible underneath while you play.
 One hotkey turns the function in front of you into a playfield. Press it
 again and you're back to your decompile.
 
-![ida-break in action](images/image.png)
+![ida-breakout in action](images/image.png)
 
 ## Requirements
 
@@ -22,11 +22,11 @@ again and you're back to your decompile.
 Clone the repo and symlink it into IDA's plugin directory:
 
 ```sh
-git clone https://github.com/hyuunnn/ida-break.git
-ln -s "$(pwd)/ida-break" ~/.idapro/plugins/ida-break
+git clone https://github.com/hyuunnn/ida-breakout.git
+ln -s "$(pwd)/ida-breakout" ~/.idapro/plugins/ida-breakout
 ```
 
-Restart IDA. The plugin auto-loads via `ida_break_entry.py`.
+Restart IDA. The plugin auto-loads via `ida_breakout_entry.py`.
 
 ## Usage
 
@@ -34,7 +34,7 @@ In any Pseudocode view (the `F5` decompile output):
 
 | Action            | Key                                                                 |
 | ----------------- | ------------------------------------------------------------------- |
-| Start / stop game | `Ctrl-Alt-K` *or* right-click → "ida-break: Start brick break"      |
+| Start / stop game | `Ctrl-Alt-K` *or* right-click → "ida-breakout: Start brick break"      |
 | Move paddle       | `←` / `→` (or `h`/`l`, `a`/`d`)                                     |
 | Launch ball       | `Space`                                                             |
 | Restart           | `R` (after WIN / LOSE)                                              |
@@ -72,9 +72,9 @@ preserving paddle math, lifecycle quirks under PySide6 — see
 IDA:
 
 ```sh
-python3 -m py_compile ida_break_lib/*.py ida_break*.py
+python3 -m py_compile ida_breakout_lib/*.py ida_breakout*.py
 python3 -c "
-from ida_break_lib.game import GameState, Paddle, Brick, Phase
+from ida_breakout_lib.game import GameState, Paddle, Brick, Phase
 g = GameState(width=400, height=300, paddle=Paddle(x=160, y=280))
 g.bricks = [Brick(x=10, y=10, w=20, h=8, text='a')]
 g.spawn_ball_on_paddle()

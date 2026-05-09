@@ -7,7 +7,7 @@ try:
 except Exception:  # pragma: no cover - IDA bundles numpy, but keep a safe fallback.
     np = None
 
-from ida_break_lib.game import Brick
+from ida_breakout_lib.game import Brick
 
 
 logger = logging.getLogger(__name__)
@@ -95,7 +95,7 @@ def _dump_widget_tree(qwidget, depth=0, max_depth=4):
         cls = qwidget.metaObject().className()
         geom = (qwidget.x(), qwidget.y(), qwidget.width(), qwidget.height())
         font = qwidget.font().family()
-        logger.info("ida-break: %s%s geom=%s font=%s", indent, cls, geom, font)
+        logger.info("ida-breakout: %s%s geom=%s font=%s", indent, cls, geom, font)
     except Exception:
         logger.exception("dump_widget_tree failed at depth %d", depth)
         return
@@ -121,13 +121,13 @@ def find_pseudocode_viewport(qwidget):
         return None, None
 
     logger.info(
-        "ida-break: find_pseudocode_viewport: outer class=%s size=%dx%d font=%s",
+        "ida-breakout: find_pseudocode_viewport: outer class=%s size=%dx%d font=%s",
         qwidget.metaObject().className(),
         qwidget.width(),
         qwidget.height(),
         qwidget.font().family(),
     )
-    logger.info("ida-break: widget tree:")
+    logger.info("ida-breakout: widget tree:")
     _dump_widget_tree(qwidget)
 
     cls_name = qwidget.metaObject().className()
@@ -147,14 +147,14 @@ def find_pseudocode_viewport(qwidget):
                 biggest = child
         if biggest is not None and biggest_area >= outer_area * 0.5:
             logger.info(
-                "ida-break: using main-content child of %s as viewport: %s geom=%s",
+                "ida-breakout: using main-content child of %s as viewport: %s geom=%s",
                 cls_name,
                 biggest.metaObject().className(),
                 (biggest.x(), biggest.y(), biggest.width(), biggest.height()),
             )
             return biggest, None
         logger.info(
-            "ida-break: using outer widget directly as viewport: %s", cls_name
+            "ida-breakout: using outer widget directly as viewport: %s", cls_name
         )
         return qwidget, None
 
@@ -164,7 +164,7 @@ def find_pseudocode_viewport(qwidget):
         vp = sa.viewport()
         if vp is not None:
             logger.info(
-                "ida-break: picked viewport via QAbstractScrollArea: %s (sa=%s)",
+                "ida-breakout: picked viewport via QAbstractScrollArea: %s (sa=%s)",
                 vp.metaObject().className(), sa.metaObject().className(),
             )
             return vp, sa
@@ -176,7 +176,7 @@ def find_pseudocode_viewport(qwidget):
         except Exception:
             continue
         if cls in _KNOWN_CUSTOM_CONTROLS or "CustomViewer" in cls or "CustomControl" in cls:
-            logger.info("ida-break: picked viewport via known-class match: %s", cls)
+            logger.info("ida-breakout: picked viewport via known-class match: %s", cls)
             return w, None
 
     candidate = None
@@ -191,13 +191,13 @@ def find_pseudocode_viewport(qwidget):
             best_area = area
     if candidate is not None:
         logger.info(
-            "ida-break: picked viewport via largest-visible-child: %s area=%d",
+            "ida-breakout: picked viewport via largest-visible-child: %s area=%d",
             candidate.metaObject().className(), best_area,
         )
         return candidate, None
 
     logger.warning(
-        "ida-break: no good child found; falling back to outer widget %s",
+        "ida-breakout: no good child found; falling back to outer widget %s",
         qwidget.metaObject().className(),
     )
     return qwidget, None
@@ -299,7 +299,7 @@ def detect_bricks_from_pixels(
             return []
     buf, w, h, dpr = grab
     logger.info(
-        "ida-break: grab: %dx%d dpr=%.2f bg_colors=%s",
+        "ida-breakout: grab: %dx%d dpr=%.2f bg_colors=%s",
         w, h, dpr,
         [(c.red(), c.green(), c.blue()) for c in bg_colors],
     )
@@ -315,7 +315,7 @@ def detect_bricks_from_pixels(
             masked_rects.append(r)
     if masked_rects:
         logger.info(
-            "ida-break: masking child rects: %s",
+            "ida-breakout: masking child rects: %s",
             [(r.x(), r.y(), r.width(), r.height()) for r in masked_rects],
         )
 
@@ -422,12 +422,12 @@ def detect_bricks_from_pixels(
         ]
         if before != len(bricks):
             logger.info(
-                "ida-break: dropped %d bricks overlapping masked child widgets",
+                "ida-breakout: dropped %d bricks overlapping masked child widgets",
                 before - len(bricks),
             )
 
     logger.info(
-        "ida-break: detect_bricks_from_pixels: viewport=%dx%d lines=%d bricks=%d",
+        "ida-breakout: detect_bricks_from_pixels: viewport=%dx%d lines=%d bricks=%d",
         w, h, len(line_ranges), len(bricks),
     )
     return bricks

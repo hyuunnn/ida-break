@@ -19,34 +19,34 @@ def should_load() -> bool:
     raw_version = ida_kernwin.get_kernel_version()
     parts = tuple(int(p) for p in raw_version.split(".") if p.isdigit())
     if parts and parts < (9, 0):
-        logger.warning("ida-break requires IDA 9.0+ (got %s)", raw_version)
+        logger.warning("ida-breakout requires IDA 9.0+ (got %s)", raw_version)
         return False
     try:
         from PySide6 import QtCore, QtGui, QtWidgets  # noqa: F401
     except Exception:
-        logger.warning("ida-break requires PySide6 (normally bundled with IDA 9.x)")
+        logger.warning("ida-breakout requires PySide6 (normally bundled with IDA 9.x)")
         return False
     try:
         import ida_hexrays  # noqa: F401
     except Exception:
-        logger.warning("ida-break requires the Hex-Rays decompiler")
+        logger.warning("ida-breakout requires the Hex-Rays decompiler")
         return False
     return True
 
 
 if should_load():
-    from ida_break import break_plugin_t
+    from ida_breakout import breakout_plugin_t
 
     def PLUGIN_ENTRY():
-        return break_plugin_t()
+        return breakout_plugin_t()
 
 else:
     import ida_idaapi
 
-    class _BreakNopPlugin(ida_idaapi.plugin_t):
+    class _BreakoutNopPlugin(ida_idaapi.plugin_t):
         flags = ida_idaapi.PLUGIN_HIDE | ida_idaapi.PLUGIN_UNL
-        wanted_name = "ida-break (disabled)"
-        comment = "ida-break is disabled in this environment"
+        wanted_name = "ida-breakout (disabled)"
+        comment = "ida-breakout is disabled in this environment"
         help = ""
         wanted_hotkey = ""
 
@@ -60,4 +60,4 @@ else:
             pass
 
     def PLUGIN_ENTRY():
-        return _BreakNopPlugin()
+        return _BreakoutNopPlugin()
