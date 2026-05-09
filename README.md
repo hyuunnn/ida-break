@@ -9,7 +9,7 @@ with the ball; the listing stays visible underneath while you play.
 One hotkey turns the function in front of you into a playfield. Press it
 again and you're back to your decompile.
 
-![ida-break in action](images/1.png)
+![ida-break in action](images/image.png)
 
 ## Requirements
 
