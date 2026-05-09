@@ -1,0 +1,28 @@
+{
+  "IDAMetadataDescriptorVersion": 1,
+  "plugin": {
+    "name": "ida-break",
+    "version": "0.1.0",
+    "entryPoint": "ida_break_entry.py",
+    "description": "Turn the Pseudocode view into a Breakout game. Every whitespace-separated token in the decompiled C source becomes a brick. The decompile listing stays visible underneath while you play.",
+    "license": "MIT",
+    "idaVersions": ">=9.0",
+    "platforms": [
+      "windows-x86_64",
+      "linux-x86_64",
+      "macos-x86_64",
+      "macos-aarch64"
+    ],
+    "categories": ["ui-ux-and-visualization"],
+    "keywords": ["breakout", "game", "pseudocode", "fun", "hexrays"],
+    "urls": {
+      "repository": "https://github.com/hyuunnn/ida-break"
+    },
+    "authors": [
+      {
+        "name": "hyun",
+        "email": "hyuunnnnn@gmail.com"
+      }
+    ]
+  }
+}
