@@ -49,7 +49,7 @@ Mechanics at a glance:
 - Standard Breakout paddle physics: ball speed magnitude is preserved
   across bounces; the paddle controls direction (angle), not speed.
 - Multiball: every 15 points spawns an extra ball (max 5).
-- Speed ramps up gradually as bricks break (capped at 2.5x).
+- Speed ramps up gradually as bricks break (capped at 2.0x).
 - WIN / LOSE shows a banner with `[R] restart   [Esc] exit` — no
   auto-close.
 

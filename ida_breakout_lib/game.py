@@ -40,7 +40,7 @@ class Ball:
 
 
 SPEED_PER_BRICK = 0.01
-SPEED_CAP = 2.5
+SPEED_CAP = 2.0
 MULTIBALL_INTERVAL = 15
 MAX_BALLS = 5
 MAX_PADDLE_ANGLE = math.pi / 3  # 60° — matches launch angle range

@@ -42,7 +42,7 @@ Pseudocode 뷰 (`F5`로 디컴파일된 창)에서:
 
 게임은 현재 함수의 디컴파일 결과 위에 투명 오버레이로 깔리고, 충돌 박스는
 실제 텍스트 픽셀에서 추출됨. 점수 15점마다 추가 공이 분기하고 (최대 5개),
-부순 벽돌 수에 비례해 속도가 점진적으로 가속(최대 2.5x).
+부순 벽돌 수에 비례해 속도가 점진적으로 가속(최대 2.0x).
 
 ## 파일 구조
 
@@ -118,7 +118,7 @@ pseudocode TWidget으로 포커스를 복귀시켜 해결.
 - **벽/벽돌 반사**: component flip만 → magnitude 보존
 - **멀티볼**: 점수 15점마다 +1 공 (최대 5개). 부순 위치에서 부모 반대 방향
   ± `MULTIBALL_ANGLE_NOISE` (≈14°) 각도 노이즈, magnitude 보존
-- **속도 가속**: `speed_bricks` 카운터 × `SPEED_PER_BRICK` (max `SPEED_CAP=2.5x`).
+- **속도 가속**: `speed_bricks` 카운터 × `SPEED_PER_BRICK` (max `SPEED_CAP=2.0x`).
   목숨 차감 시 가속만 리셋 (점수는 누적 보존). per-frame 이동량은
   `n_sub * sub_dt = speed_factor`로 component-uniform
 - **AABB 충돌**: 침투 깊이 최소축으로 면 결정. 빠른 속도에서의 터널링은
